@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Informe os dados abaixo para gerar a carteirinha</title>
+    <style>
+      label{
+        display:inline-block; 
+        width: 120px;
+      }
+      </style>
+  </head>
+  <body>
+    <h1>Carteirinha Tester</h1>
+		<h2>Informe os dados abaixo para gerar a carteirinha</h2>
+  <form id="meu-formulario">
+    <label>Nome:</label>
+    <input type="text" name="nome" required><br>
+    <label>CPF:</label>
+    <input type="text" name="cpf" required><br>
+    <label>Matrícula:</label>
+    <input type="tel" name="matricula" required><br>
+    <label>Data de Nasicmento:</label>
+    <input type="tel" name="data_nascimento" required><br>    
+    <label>Curso:</label>
+    <input type="text" name="curso" required><br>    
+    <label>Data de Início:</label>
+    <input type="tel" name="data_inicio" required><br>   
+    <label>Validade:</label>
+      <input type="tel" name="validade" required>    <br>  
+    <label>Código Unico Carteirinha:</label>
+      <input type="text" name="hash_carteirinha" required>
+        <br>  
+    <label>Link Carteirinha:</label>
+    <input type="text" name="link_carteirinha" required>
+    <br>  
+    <label>Senha Carteirinha:</label>
+    <input type="text" name="senha_carteirinha" required>   
+    <br>  
+    <label>Foto:</label>
+    <input type="file" name="foto" required>
+    <br>
+    <button type="submit">Enviar</button>
+  </form>
+
+    <script>
+	const form = document.querySelector('#meu-formulario');
+
+form.addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  // Convertendo a imagem para FormData
+  const imagem = form.foto.files[0];
+  const formData = new FormData();
+  formData.append('foto', imagem);
+
+  // Adicionando os dados do formulário à FormData
+  formData.append('nome', form.nome.value);
+  formData.append('cpf', form.cpf.value);
+  formData.append('matricula', form.matricula.value);
+  formData.append('data_nascimento', form.data_nascimento.value);
+  formData.append('curso', form.curso.value);
+  formData.append('data_inicio', form.data_inicio.value);
+  formData.append('validade', form.validade.value);
+  formData.append('hash_carteirinha', form.hash_carteirinha.value);
+  formData.append('link_carteirinha', form.link_carteirinha.value);
+  formData.append('senha_carteirinha', form.senha_carteirinha.value);
+
+  // Enviando a requisição
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/gerar-pdf');
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      console.log('Arquivo gerado com sucesso!');
+      const url = window.URL.createObjectURL(new Blob([xhr.response]));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = form.matricula.value+'.pdf';
+      a.click();
+    } else {
+      console.log('Erro ao gerar arquivo!');
+    }
+  };
+  xhr.responseType = 'arraybuffer';
+  xhr.send(formData);
+});
+
+    </script>
+  </body>
+</html>

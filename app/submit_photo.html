@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Upload de Imagem com Recorte</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" integrity="sha512-REgJICxrWQ42z99mmEDPvlXyLbO8NwbWcIv06eCgFlwYJNlFcaIExA/tfjsPYi/9JjyGtDnfvo5fyM1m2rY5sw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js" integrity="sha512-E7ph47QNSJ88v7PivsMwBzkBy8zOeRKp6TgU6T1U6FrmLduj3qATBmkS3Dnl7pZjWzRv7xOn4G4uOW7iDNPhWQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  </head>
+  <body>
+    <form>
+      <div class="row">
+  <div class="col-md-6">
+    <label for="imagem">Escolha uma imagem:</label>
+    <input type="file" id="imagem" accept="image/*">
+  </div>
+  <div class="col-md-6">
+    <div class="imagem-preview">
+      <img id="imagem-preview" src="" alt="Preview da Imagem">
+    </div>
+  </div>
+</div>
+
+<div class="row mt-3">
+  <div class="col-md-6">
+    <label for="crop">Selecione a área para o corte:</label>
+    <div class="crop-container">
+      <img id="crop-preview" src="" alt="Preview do Crop">
+    </div>
+  </div>
+  <div class="col-md-6">
+    <label for="resultado">Resultado do Crop:</label>
+    <div class="crop-resultado">
+      <canvas id="resultado" width="150" height="150"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+  const inputImagem = document.querySelector('#imagem');
+  const previewImagem = document.querySelector('#imagem-preview');
+  const previewCrop = document.querySelector('#crop-preview');
+  const canvasResultado = document.querySelector('#resultado');
+  const cropWidth = 150;
+  const cropHeight = 150;
+  
+  // Adiciona o evento de carregamento da imagem
+  inputImagem.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    
+    if (!file.type.match('image.*')) {
+      alert('Apenas imagens são permitidas.');
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      previewImagem.src = event.target.result;
+      previewCrop.src = event.target.result;
+    }
+    reader.readAsDataURL(file);
+  });
+  
+  // Adiciona o evento de seleção da área de corte
+  previewCrop.addEventListener('load', () => {
+    const cropper = new Cropper(previewCrop, {
+      aspectRatio: 1,
+      viewMode: 1,
+      crop: () => {
+        const canvas = cropper.getCroppedCanvas({
+          width: cropWidth,
+          height: cropHeight,
+          fillColor: '#fff'
+        });
+        canvasResultado.getContext('2d').clearRect(0, 0, cropWidth, cropHeight);
+        canvasResultado.getContext('2d').drawImage(canvas, 0, 0, cropWidth, cropHeight);
+      }
+    });
+  });
+</script>
+
+    </form>
+	</body>
+</html>
+    
