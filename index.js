@@ -4,7 +4,19 @@ const multer = require('multer');
 var bodyParser = require('body-parser');
 const PDFDocument = require('pdfkit');
 var app 		= express();
-const upload = multer({ dest: './uploads/' });
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, 'uploads/'); // Define o diretório onde os arquivos serão salvos
+	},
+	filename: function (req, file, cb) {
+		// Extrai a extensão original do arquivo
+		const extension = file.originalname.split('.').pop();
+
+		// Define o nome do arquivo como um hash ou qualquer outro identificador, mais a extensão correta
+		cb(null, `${file.fieldname}-${Date.now()}.${extension}`);
+	}
+});
+const upload = multer({ storage: storage });
 const fs = require('fs');
 const QRCode = require('qrcode');
 
