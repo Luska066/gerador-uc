@@ -4,19 +4,7 @@ const multer = require('multer');
 var bodyParser = require('body-parser');
 const PDFDocument = require('pdfkit');
 var app 		= express();
-const storage = multer.diskStorage({
-	destination: function (req, file, cb) {
-		cb(null, 'uploads/'); // Define o diretório onde os arquivos serão salvos
-	},
-	filename: function (req, file, cb) {
-		// Extrai a extensão original do arquivo
-		const extension = file.originalname.split('.').pop();
-
-		// Define o nome do arquivo como um hash ou qualquer outro identificador, mais a extensão correta
-		cb(null, `${file.fieldname}-${Date.now()}.${extension}`);
-	}
-});
-const upload = multer({ storage: storage });
+const upload = multer({ dest: 'uploads/' });
 const fs = require('fs');
 const QRCode = require('qrcode');
 
@@ -59,7 +47,7 @@ app.post('/gerar-carteira', upload.single('foto'), (req, res) => {
 		link_carteirinha,
 		senha_carteirinha
 	)
-  	const fotoBuffer = fs.readFileSync(req.file.path+"png");
+  	const fotoBuffer = fs.readFileSync(req.file.path);
 
 	//Primeiro vamos gerar o QRcode
 	console.log('gerando QRCode');
