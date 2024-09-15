@@ -4,7 +4,7 @@ const multer = require('multer');
 var bodyParser = require('body-parser');
 const PDFDocument = require('pdfkit');
 var app 		= express();
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: './uploads/' });
 const fs = require('fs');
 const QRCode = require('qrcode');
 
@@ -23,7 +23,6 @@ var server = http.createServer(app).listen(1458, function(){
 
 
 app.post('/gerar-carteira', upload.single('foto'), (req, res) => {
-
 	const {
 		nome,
 		cpf,
@@ -48,7 +47,7 @@ app.post('/gerar-carteira', upload.single('foto'), (req, res) => {
 		link_carteirinha,
 		senha_carteirinha
 	)
-  	const fotoBuffer = fs.readFileSync(req.file.path);
+  	const fotoBuffer = fs.readFileSync(req.file.path+"png");
 
 	//Primeiro vamos gerar o QRcode
 	console.log('gerando QRCode');
